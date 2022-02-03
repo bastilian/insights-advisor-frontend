@@ -21,12 +21,21 @@ import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import { Provider } from 'react-redux';
+import { getStore } from '../../Store';
 
 const RulesTable = lazy(() =>
   import(
     /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
   )
 );
+
+const TTRulesTable = lazy(() =>
+  import(
+    /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/TableToolsRulesTable'
+  )
+);
+
 const PathwaysTable = lazy(() =>
   import(
     /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
@@ -55,7 +64,7 @@ const List = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <PageHeader className="ins-c-recommendations-header">
         <PageHeaderTitle
           title={`${intl.formatMessage(messages.insightsHeader)} ${intl
@@ -72,46 +81,49 @@ const List = () => {
         )}
       </PageHeader>
       <Main>
-        <Suspense fallback={<Loading />}>
-          <PathwaysPanel />
-        </Suspense>
-        <Tabs
-          className="advisor__background--global-100"
-          mountOnEnter
-          unmountOnExit
-          activeKey={activeTab}
-          onSelect={(_e, tab) => changeTab(tab)}
-        >
-          <Tab
-            eventKey={0}
-            title={
-              <TabTitleText>
-                {intl.formatMessage(messages.recommendations)}
-              </TabTitleText>
-            }
+        <Provider store={getStore()}>
+          <Suspense fallback={<Loading />}>
+            <PathwaysPanel />
+          </Suspense>
+          <Tabs
+            className="advisor__background--global-100"
+            mountOnEnter
+            unmountOnExit
+            activeKey={activeTab}
+            onSelect={(_e, tab) => changeTab(tab)}
           >
-            <Suspense fallback={<Loading />}>
-              <RulesTable />
-            </Suspense>
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={
-              <TabTitleText>
-                {intl.formatMessage(messages.pathways)}{' '}
-                {QuestionTooltip(
-                  intl.formatMessage(messages.recommendedPathways)
-                )}
-              </TabTitleText>
-            }
-          >
-            <Suspense fallback={<Loading />}>
-              <PathwaysTable />
-            </Suspense>
-          </Tab>
-        </Tabs>
+            <Tab
+              eventKey={0}
+              title={
+                <TabTitleText>
+                  {intl.formatMessage(messages.recommendations)}
+                </TabTitleText>
+              }
+            >
+              <Suspense fallback={<Loading />}>
+                <TTRulesTable />
+                <RulesTable />
+              </Suspense>
+            </Tab>
+            <Tab
+              eventKey={1}
+              title={
+                <TabTitleText>
+                  {intl.formatMessage(messages.pathways)}{' '}
+                  {QuestionTooltip(
+                    intl.formatMessage(messages.recommendedPathways)
+                  )}
+                </TabTitleText>
+              }
+            >
+              <Suspense fallback={<Loading />}>
+                <PathwaysTable />
+              </Suspense>
+            </Tab>
+          </Tabs>
+        </Provider>
       </Main>
-    </React.Fragment>
+    </>
   );
 };
 

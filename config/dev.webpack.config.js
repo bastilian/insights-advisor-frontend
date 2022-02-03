@@ -73,5 +73,26 @@ plugins.push(
 module.exports = (env) => {
   env && env.analyze === 'true' && plugins.push(new BundleAnalyzerPlugin());
 
-  return { ...webpackConfig, plugins };
+  return {
+    ...webpackConfig,
+    plugins,
+    devServer: {
+      ...webpackConfig.devServer,
+      liveReload: false,
+      hot: false,
+    },
+    resolve: {
+      ...webpackConfig.resolve,
+      alias: {
+        ...webpackConfig.resolve.alias,
+        react: resolve(__dirname, '../node_modules/react'),
+        'react-intl': resolve(__dirname, '../node_modules/react-intl'),
+        'react-redux': resolve(__dirname, '../node_modules/react-redux'),
+        '@patternfly/react-table': resolve(
+          __dirname,
+          '../node_modules/@patternfly/react-table'
+        ),
+      },
+    },
+  };
 };
