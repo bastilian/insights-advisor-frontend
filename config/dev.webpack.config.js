@@ -80,6 +80,13 @@ plugins.push(
 
 module.exports = (env) => {
   env && env.analyze === 'true' && plugins.push(new BundleAnalyzerPlugin());
-
-  return { ...webpackConfig, plugins };
+  const conf = {
+    ...webpackConfig,
+    devServer: {
+      ...webpackConfig.devServer,
+      hot: false,
+      liveReload: false,
+    },
+  };
+  return { ...conf, plugins };
 };

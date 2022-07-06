@@ -22,6 +22,11 @@ const ClassicRedirect = lazy(() =>
 const suspenseHelper = (component) => (
   <Suspense fallback={<Loading />}>{component}</Suspense>
 );
+
+const SuspenseHelper = ({ children }) => (
+  <Suspense fallback={<Loading />}>{children}</Suspense>
+);
+
 const Recs = () => (
   <React.Fragment>
     <Switch>
@@ -48,7 +53,11 @@ const Recs = () => (
       <Route
         exact
         path="/recommendations/pathways/systems/:id"
-        component={() => suspenseHelper(<DetailsPathways />)}
+        component={() => (
+          <SuspenseHelper>
+            <DetailsPathways />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
